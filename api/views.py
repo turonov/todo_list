@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 # Import authentication classes
 from django.contrib.auth import authenticate
-
+from base64 import b64decode
 
 class HomeView(View):
     def get(self, request):
@@ -25,8 +25,20 @@ class HomeView(View):
 
 
 def index(request):
+    # Get headers
+    auth = request.headers.get('Authorization')
+    # Check if Authorization header is present
+    if auth is None:
+        return JsonResponse({'result': 'You are not authenticated'})
+    # Get token
+    token = auth.split(' ')[1]
+    auth=b64decode(token).decode() # Decode token
+    username, password = auth.split(':') # Split token
+
     # Check if user is authenticated
-    user = authenticate(username='user', password='789987qwe')
+    
+    user = authenticate(username=username, password=password)
+
     if user is not None:
         return JsonResponse({
             'username': user.username,
