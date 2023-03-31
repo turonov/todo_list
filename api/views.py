@@ -2,7 +2,8 @@ from django.http import HttpResponse, JsonResponse,HttpRequest
 from django.views import View
 # Import user model
 from django.contrib.auth.models import User
-from .models import Task, Student
+from .models import Task
+from django.shortcuts import render
 # Import authentication classes
 from django.contrib.auth import authenticate
 from base64 import b64decode
@@ -38,7 +39,7 @@ def tasks(request: HttpRequest) -> JsonResponse:
                 'todo':[]
             }
             # Get all tasks
-            tasks = Task.objects.all()
+            tasks = Task.objects.filter(student=user)
             for task in tasks:
                 todos['todo'].append({
                     'id': task.id,
@@ -57,6 +58,17 @@ def tasks(request: HttpRequest) -> JsonResponse:
 
             
 
-
+def home(request:HttpRequest):
+    b = "absd"
+    task = Task.objects.all(),
+    data = ['a','b', 'c','d']
+    context = {
+        'data':data,
+        'tasks':task,
+        'x':5,
+        }
+    return render(
+        request, 'home.html',context   
+    )
 
         
